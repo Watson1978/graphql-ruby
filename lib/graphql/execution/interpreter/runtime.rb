@@ -758,6 +758,7 @@ module GraphQL
             response_list.graphql_non_null_list_items = inner_type.non_null?
             set_result(selection_result, result_name, response_list)
             result_was_set = false
+            args = []
             idx = 0
             list_value = begin
               loop_i = 0
@@ -776,7 +777,9 @@ module GraphQL
                 next_path.freeze
                 idx += 1
                 if use_dataloader_job
+                  args << [inner_value, inner_type, next_path, ast_node, field, owner_object, arguments, this_idx, response_list, next_selections, owner_type]
                   @dataloader.append_job do
+                    inner_value, inner_type, next_path, ast_node, field, owner_object, arguments, this_idx, response_list, next_selections, owner_type = args.shift
                     resolve_list_item(inner_value, inner_type, next_path, ast_node, field, owner_object, arguments, this_idx, response_list, next_selections, owner_type)
                   end
                 else
